@@ -1,0 +1,14 @@
+{include file='common/flowheader' /}
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <div class="">
+      <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">申请人:</label>
+        <div class="col-xs-12 col-sm-8">
+             {$originator->nickname}
+        </div>
+      </div>
+      {%editList%}
+   </div>
+{include file='common/flowtoolbar' /}
+    
+</form>
