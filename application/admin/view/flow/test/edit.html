@@ -1,0 +1,29 @@
+{include file='common/flowheader' /}
+<form id="edit-form" class="form-horizontal" role="form" data-toggle="validator" method="POST" action="">
+    <div class="">
+      <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">申请人:</label>
+        <div class="col-xs-12 col-sm-8">
+             {$originator->nickname}
+        </div>
+      </div>
+          {if $fieldList.business_type.read==1}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Business_type')}:</label>
+        <div class="col-xs-12 col-sm-8 {if $fieldList.business_type.write==0}disablefield{/if}">
+            <input id="c-business_type" data-rule="required" class="form-control" name="row[business_type]" type="text" value="{$row.business_type}">
+        </div>
+    </div>
+    {/if}
+    {if $fieldList.remark.read==1}
+    <div class="form-group">
+        <label class="control-label col-xs-12 col-sm-2">{:__('Remark')}:</label>
+        <div class="col-xs-12 col-sm-8 {if $fieldList.remark.write==0}disablefield{/if}">
+            <input id="c-remark" data-rule="required" class="form-control" name="row[remark]" type="text" value="{$row.remark}">
+        </div>
+    </div>
+    {/if}
+   </div>
+{include file='common/flowtoolbar' /}
+    
+</form>

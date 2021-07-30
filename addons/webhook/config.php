@@ -1,0 +1,57 @@
+<?php
+
+return [
+    [
+        'name' => '__tips__',
+        'title' => '温馨提示',
+        'type' => 'string',
+        'content' => [],
+        'value' => '很抱歉，插件暂不支持Github，但将会尽快升级~',
+        'rule' => '',
+        'msg' => '',
+        'tip' => '',
+        'ok' => '',
+        'extend' => '',
+    ],
+    [
+        'name' => 'provider',
+        'title' => '服务商',
+        'type' => 'radio',
+        'content' => [
+            'gitee' => '码云',
+        ],
+        'value' => 'gitee',
+        'rule' => 'required',
+        'msg' => '',
+        'tip' => '',
+        'ok' => '',
+        'extend' => '',
+    ],
+    [
+        'name' => 'type',
+        'title' => '加密方法',
+        'type' => 'radio',
+        'content' => [
+            'password' => '密码',
+            'secret' => '签名密钥',
+        ],
+        'value' => 'secret',
+        'rule' => 'required',
+        'msg' => '',
+        'tip' => '',
+        'ok' => '',
+        'extend' => '',
+    ],
+    [
+        'name' => 'ps',
+        'title' => '密码/签名密钥',
+        'type' => 'string',
+        'content' => [],
+        'value' => '',
+        'rule' => 'required',
+        'msg' => '请填写密码或签名密钥',
+        'tip' => '填写密码或签名密钥均可',
+        'ok' => '',
+        'extend' => '',
+    ],
+];

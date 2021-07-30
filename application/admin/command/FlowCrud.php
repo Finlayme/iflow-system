@@ -2,6 +2,7 @@
 
 namespace app\admin\command;
 
+use app\admin\model\flow\FlowTemplate;
 use fast\Form;
 use think\Config;
 use think\console\Command;
@@ -70,13 +71,13 @@ class FlowCrud extends Command
      */
     protected $fieldFormatterSuffix = [
         'status' => ['type' => ['varchar', 'enum'], 'name' => 'status'],
-        'icon'   => 'icon',
-        'flag'   => 'flag',
-        'url'    => 'url',
-        'image'  => 'image',
+        'icon' => 'icon',
+        'flag' => 'flag',
+        'url' => 'url',
+        'image' => 'image',
         'images' => 'images',
         'switch' => 'toggle',
-        'time'   => ['type' => ['int', 'timestamp'], 'name' => 'datetime']
+        'time' => ['type' => ['int', 'timestamp'], 'name' => 'datetime']
     ];
 
     /**
@@ -115,6 +116,14 @@ class FlowCrud extends Command
      */
     protected $editorClass = 'editor';
 
+    /**
+     * @var array
+     */
+    protected const VIEW_TYPE = ['add', 'edit'];
+
+    /**
+     *
+     */
     protected function configure()
     {
         $this
@@ -285,27 +294,27 @@ class FlowCrud extends Command
 
                 $relations[] = [
                     //关联表基础名
-                    'relationName'          => $relationName,
+                    'relationName' => $relationName,
                     //关联模型名
-                    'relationModel'         => $relationModel,
+                    'relationModel' => $relationModel,
                     //关联文件
-                    'relationFile'          => $relationFile,
+                    'relationFile' => $relationFile,
                     //关联表名称
-                    'relationTableName'     => $relationTableName,
+                    'relationTableName' => $relationTableName,
                     //关联表信息
-                    'relationTableInfo'     => $relationTableInfo,
+                    'relationTableInfo' => $relationTableInfo,
                     //关联模型表类型(name或table)
-                    'relationTableType'     => $relationTableType,
+                    'relationTableType' => $relationTableType,
                     //关联模型表类型名称
                     'relationTableTypeName' => $relationTableTypeName,
                     //关联模式
-                    'relationFields'        => isset($relationFields[$index]) ? explode(',', $relationFields[$index]) : [],
+                    'relationFields' => isset($relationFields[$index]) ? explode(',', $relationFields[$index]) : [],
                     //关联模式
-                    'relationMode'          => isset($relationMode[$index]) ? $relationMode[$index] : 'belongsto',
+                    'relationMode' => isset($relationMode[$index]) ? $relationMode[$index] : 'belongsto',
                     //关联表外键
-                    'relationForeignKey'    => isset($relationForeignKey[$index]) ? $relationForeignKey[$index] : Loader::parseName($relationName) . '_id',
+                    'relationForeignKey' => isset($relationForeignKey[$index]) ? $relationForeignKey[$index] : Loader::parseName($relationName) . '_id',
                     //关联表主键
-                    'relationPrimaryKey'    => isset($relationPrimaryKey[$index]) ? $relationPrimaryKey[$index] : '',
+                    'relationPrimaryKey' => isset($relationPrimaryKey[$index]) ? $relationPrimaryKey[$index] : '',
                 ];
             }
         }
@@ -324,6 +333,8 @@ class FlowCrud extends Command
         $controllerUrl = strtolower(implode('/', $controllerArr));
         $controllerBaseName = strtolower(implode(DS, $controllerArr));
 
+        $flowCodeArray = explode('/', $controller);
+        $flowCode = $flowCodeArray[1] ?? '';
         //视图文件
         $viewDir = $adminPath . 'view' . DS . $controllerBaseName . DS;
 
@@ -679,7 +690,7 @@ class FlowCrud extends Command
                     }
                     //构造添加和编辑HTML信息
                     $addList[] = $this->getFormGroup($field, $formAddElement);
-                    $editList[] = $this->getFormGroup($field, $formEditElement,'edit');
+                    $editList[] = $this->getFormGroup($field, $formEditElement, 'edit');
                 }
 
                 //过滤text类型字段
@@ -741,41 +752,42 @@ class FlowCrud extends Command
 
 
             $data = [
-                'controllerNamespace'     => $controllerNamespace,
-                'modelNamespace'          => $modelNamespace,
-                'validateNamespace'       => $validateNamespace,
-                'controllerUrl'           => $controllerUrl,
-                'controllerName'          => $controllerName,
-                'controllerAssignList'    => implode("\n", $controllerAssignList),
-                'modelName'               => $modelName,
-                'modelTableName'          => $modelTableName,
-                'modelTableType'          => $modelTableType,
-                'modelTableTypeName'      => $modelTableTypeName,
-                'validateName'            => $validateName,
-                'tableComment'            => $tableComment,
-                'iconName'                => $iconName,
-                'pk'                      => $priKey,
-                'order'                   => $order,
-                'table'                   => $table,
-                'tableName'               => $modelTableName,
-                'addList'                 => $addList,
-                'editList'                => $editList,
-                'javascriptList'          => $javascriptList,
-                'langList'                => $langList,
+                'controllerNamespace' => $controllerNamespace,
+                'modelNamespace' => $modelNamespace,
+                'validateNamespace' => $validateNamespace,
+                'controllerUrl' => $controllerUrl,
+                'controllerName' => $controllerName,
+                'controllerAssignList' => implode("\n", $controllerAssignList),
+                'modelName' => $modelName,
+                'modelTableName' => $modelTableName,
+                'modelTableType' => $modelTableType,
+                'modelTableTypeName' => $modelTableTypeName,
+                'validateName' => $validateName,
+                'tableComment' => $tableComment,
+                'iconName' => $iconName,
+                'pk' => $priKey,
+                'order' => $order,
+                'table' => $table,
+                'tableName' => $modelTableName,
+                'addList' => $addList,
+                'editList' => $editList,
+                'javascriptList' => $javascriptList,
+                'langList' => $langList,
                 'modelAutoWriteTimestamp' => in_array('createtime', $fieldArr) || in_array('updatetime', $fieldArr) ? "'int'" : 'false',
-                'createTime'              => in_array('createtime', $fieldArr) ? "'createtime'" : 'false',
-                'updateTime'              => in_array('updatetime', $fieldArr) ? "'updatetime'" : 'false',
-                'relationSearch'          => $relations ? 'true' : 'false',
-                'relationWithList'        => '',
-                'relationMethodList'      => '',
-                'controllerIndex'         => '',
-                'headingHtml'             => $headingHtml,
-                'visibleFieldList'        => $fields ? "\$row->visible(['" . implode("','", array_filter(explode(',', $fields))) . "']);" : '',
-                'appendAttrList'          => implode(",\n", $appendAttrList),
-                'getEnumList'             => implode("\n\n", $getEnumArr),
-                'getAttrList'             => implode("\n\n", $getAttrArr),
-                'setAttrList'             => implode("\n\n", $setAttrArr),
-                'modelInit'               => $modelInit,
+                'createTime' => in_array('createtime', $fieldArr) ? "'createtime'" : 'false',
+                'updateTime' => in_array('updatetime', $fieldArr) ? "'updatetime'" : 'false',
+                'relationSearch' => $relations ? 'true' : 'false',
+                'relationWithList' => '',
+                'relationMethodList' => '',
+                'controllerIndex' => '',
+                'headingHtml' => $headingHtml,
+                'visibleFieldList' => $fields ? "\$row->visible(['" . implode("','", array_filter(explode(',', $fields))) . "']);" : '',
+                'appendAttrList' => implode(",\n", $appendAttrList),
+                'getEnumList' => implode("\n\n", $getEnumArr),
+                'getAttrList' => implode("\n\n", $getAttrArr),
+                'setAttrList' => implode("\n\n", $setAttrArr),
+                'modelInit' => $modelInit,
+                'flowCode' => $flowCode
             ];
 
             //如果使用关联模型
@@ -1010,9 +1022,10 @@ EOD;
     }
 
     /**
+     * @TODO js/lang文件待观察
      * 写入到文件
      * @param string $name
-     * @param array  $data
+     * @param array $data
      * @param string $pathname
      * @return mixed
      */
@@ -1027,13 +1040,29 @@ EOD;
         if (!is_dir(dirname($pathname))) {
             mkdir(dirname($pathname), 0755, true);
         }
+        if (!empty($data['flowCode']) && in_array($name, self::VIEW_TYPE, false)) {
+            $this->saveViewData($data['flowCode'], $name, $content);
+        }
+        return true;
         return file_put_contents($pathname, $content);
+    }
+
+    /**
+     * @param $flowCode
+     * @param $type
+     * @param $content
+     * @return int|string
+     */
+    protected function saveViewData($flowCode, $type, $content)
+    {
+        $commonFlowModel = new FlowTemplate();
+        return $commonFlowModel->insert(['flow_code' => $flowCode, 'view_type' => $type, 'template' => $content, 'updatetime' => date('Y-m-d H:i:s')], true);
     }
 
     /**
      * 获取替换后的数据
      * @param string $name
-     * @param array  $data
+     * @param array $data
      * @return string
      */
     protected function getReplacedStub($name, $data)
@@ -1097,7 +1126,7 @@ EOD;
 
     /**
      * 读取数据和语言数组列表
-     * @param array   $arr
+     * @param array $arr
      * @param boolean $withTpl
      * @return array
      */
@@ -1153,7 +1182,7 @@ EOD;
         return $itemArr;
     }
 
-    protected function getFieldType(& $v)
+    protected function getFieldType(&$v)
     {
         $inputType = 'text';
         switch ($v['DATA_TYPE']) {
@@ -1216,8 +1245,8 @@ EOD;
 
     /**
      * 判断是否符合指定后缀
-     * @param string $field     字段名称
-     * @param mixed  $suffixArr 后缀
+     * @param string $field 字段名称
+     * @param mixed $suffixArr 后缀
      * @return boolean
      */
     protected function isMatchSuffix($field, $suffixArr)
@@ -1237,13 +1266,12 @@ EOD;
      * @param string $content
      * @return string
      */
-    protected function getFormGroup($field, $content,$type = '')
+    protected function getFormGroup($field, $content, $type = '')
     {
         $langField = mb_ucfirst($field);
-        $typestring='';
-        if($type == 'edit')
-        {
-              $typestring="{if \$fieldList.$field.write==0}disablefield{/if}";
+        $typestring = '';
+        if ($type == 'edit') {
+            $typestring = "{if \$fieldList.$field.write==0}disablefield{/if}";
         }
         return <<<EOD
     {if \$fieldList.$field.read==1}
@@ -1291,7 +1319,7 @@ EOD;
      * @param string $field
      * @param string $datatype
      * @param string $extend
-     * @param array  $itemArr
+     * @param array $itemArr
      * @return string
      */
     protected function getJsColumn($field, $datatype = '', $extend = '', $itemArr = [])

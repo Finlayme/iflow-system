@@ -287,7 +287,7 @@
                         .then(res => {
                             var layerIndex =  parent.Layer.load(0);
                             parent.$("#save").attr("disabled",true);
-                            // 获取数据成功                        
+                            // 获取数据成功
                             axios.post(url, {
                                 data: res
                             })

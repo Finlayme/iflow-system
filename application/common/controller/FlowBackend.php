@@ -2,12 +2,8 @@
 
 namespace app\common\controller;
 
-use app\common\controller\Backend;
-use think\Loader;
-use app\common\library\FlowEngine;
-use fast\Date;
-use think\Db;
 use think\Config;
+use think\Db;
 
 /**
  * 后台控制器基类
@@ -69,6 +65,15 @@ class FlowBackend extends Backend
      */
     public function add()
     {
+        $this->addHandle();
+        return $this->view->fetch();
+    }
+
+    /**
+     * @return $this
+     */
+    protected function addHandle()
+    {
         $params = $this->request->post("row/a");
         $flowTmp = $this->scheme->get($this->request->request("ids"));
         if ($this->request->isPost()) {
@@ -82,8 +87,12 @@ class FlowBackend extends Backend
                 $this->flow->start($params);
                 $this->success();
             } catch (\think\exception\PDOException $e) {
+                echo $e->getMessage();
+                exit();
                 $this->error($e->getMessage());
             } catch (\think\Exception $e) {
+                echo $e->getMessage();
+                exit();
                 $this->error($e->getMessage());
             }
         }
@@ -91,20 +100,26 @@ class FlowBackend extends Backend
         $content = json_decode($flowTmp->flowcontent, true);
         $lines = $content['lines'];
         //所有节点信息
-        $nodes = $content['nodes'];
-        $rtn = array_search('start', array_column($nodes, 'type'));
-        $this->currentNode = $nodes[$rtn];
-        $fieldList = $this->getNodeField($this->request->request("ids"),$this->currentNode['id'],$flowTmp['bizscheme']);
+        $nodes = $content['nodes'] ?? [];
+        $rtn = array_search('start', array_column(!is_null($nodes) ? $nodes : [], 'type'));
+        $this->currentNode = $nodes[$rtn] ?? [];
+        $fieldList = $this->getNodeField($this->request->request("ids"), $this->currentNode['id'], $flowTmp['bizscheme']);
         $this->view->assign("serial_no", $serial_no);
         $this->assignconfig('flowCode', $flowTmp['flowcode']);
         $this->view->assign('fieldList', $fieldList);
-        return $this->view->fetch();
+        return $this;
     }
 
     /**
      * 寻找下一个审批节点,同意按钮执行的方法
      */
     public function edit($ids = NULL)
+    {
+        $this->editHandle($ids);
+        return $this->view->fetch();
+    }
+
+    protected function editHandle($ids)
     {
         $ids = $this->request->request('ids');
         $row = $this->model->get($ids);
@@ -156,7 +171,7 @@ class FlowBackend extends Backend
             ->order('main.createtime asc,main.completedtime asc')
             ->select();
         //字段权限
-        $fieldList = $this->getNodeField($task["flowid"],$task['stepid'],$schme['bizscheme'],'view');
+        $fieldList = $this->getNodeField($task["flowid"], $task['stepid'], $schme['bizscheme'], 'view');
         $this->assignconfig('task', $task);
         $this->assignconfig('flowCode', $schme['flowcode']);
         $this->view->assign("history", $history);
@@ -166,7 +181,7 @@ class FlowBackend extends Backend
         $this->view->assign("originator", $originator);
         $this->view->assign("auth", $this->auth);
         $this->view->assign('fieldList', $fieldList);
-        return $this->view->fetch();
+        return $this;
     }
 
     /**
@@ -207,6 +222,7 @@ class FlowBackend extends Backend
             }
         }
     }
+
     /**
      * 获取流水号
      */
@@ -225,30 +241,29 @@ class FlowBackend extends Backend
             $serial_no .= Date('m');
         }
         $serial_no .= str_pad($row['index'], $row['lengh'], "0", STR_PAD_LEFT);
-        $row->allowField(true)->save(['index'=>($row['index']+1)]);
+        $row->allowField(true)->save(['index' => ($row['index'] + 1)]);
         return $serial_no;
     }
-     /**
+
+    /**
      * 获取节点授权字段默认是全部读
      */
-    public function getNodeField($ids,$node,$code,$type='')
+    public function getNodeField($ids, $node, $code, $type = '')
     {
         $data = [];
         $fieldList = Db::name('flow_field')
-        ->where(['node_id'=>$node,'flow_id'=>$ids])
-        ->select();
-
-        if(!$fieldList)
-        {
-            $fieldList = Db::name('view_flow_field_default')
-            ->where(['table_name'=>$code,'TABLE_SCHEMA'=>Config::get('database.database')])
+            ->where(['node_id' => $node, 'flow_id' => $ids])
             ->select();
+
+        if (!$fieldList) {
+            $fieldList = Db::name('view_flow_field_default')
+                ->where(['table_name' => $code, 'TABLE_SCHEMA' => Config::get('database.database')])
+                ->select();
         }
-        foreach($fieldList as $item)
-        {
+        foreach ($fieldList as $item) {
             $data[$item['field']] = [
                 'read' => $item['read'],
-                'write' =>$type=='view'?0: $item['write']
+                'write' => $type == 'view' ? 0 : $item['write']
             ];
         }
 

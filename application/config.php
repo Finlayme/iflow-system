@@ -260,7 +260,7 @@ return [
     //FastAdmin配置
     'fastadmin'              => [
         //是否开启前台会员中心
-        'usercenter'            => true,
+        'usercenter'            => false,
         //会员注册验证码类型email/mobile/wechat/text/false
         'user_register_captcha' => 'text',
         //登录验证码

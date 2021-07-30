@@ -142,7 +142,7 @@ class Formbuild extends Backend
                 $flow_id = $this->request->request('ids');
                 $content = json_decode($this->scheme->flowcontent, true);
                 $nodes = $content['nodes'];
-                $rtn = array_search('start', array_column($nodes, 'type'));
+                $rtn = array_search('start', array_column($nodes??[], 'type'));
                 $node_id = $nodes[$rtn]['id'];
             }
             $right = $this->getNodeField($flow_id, $node_id);

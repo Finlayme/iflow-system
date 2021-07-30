@@ -66,7 +66,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                     e.stopPropagation();
                     var url = '';
                     if (row.frmtype == '2') {
-                        url = Config.moduleurl + "/flow/" + row.flowcode + "/add?ids=" + row.id;
+                        url = Config.moduleurl + "/flow/Commonflow/add?ids=" + row.id+"&flow_code="+ row.flowcode;
                         debugger;
                         Fast.api.open(url,row.flowname,{})
                     }
@@ -109,8 +109,8 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                         $(">", footer).wrapAll("<div class='row'></div>");
                     }
                     footer.insertAfter(layero.find('.layui-layer-content'));
-                    layero.find('#save').click(function(){                       
-                        var iframeWin = window[layero.find('iframe')[0]['name']];                     
+                    layero.find('#save').click(function(){
+                        var iframeWin = window[layero.find('iframe')[0]['name']];
                         var data = iframeWin.save(index);
                     })
                     layero.find('#start').click(function(){

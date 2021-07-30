@@ -138,7 +138,7 @@ define(['jquery', 'bootstrap', 'backend', 'table', 'form'], function ($, undefin
                             }
                         }
                         else {
-                            url = 'flow/' + row.flowcode + '/edit?ids=' + row.bizobjectid + '&taskid=' + row.id + '&mode=' + mode
+                            url = 'flow/commonflow/edit?ids=' + row.bizobjectid + '&taskid=' + row.id + '&mode=' + mode +'&flow_code='+ row.flowcode;
                             if (url.indexOf("{ids}") !== -1) {
                                 url = Table.api.replaceurl(url, {ids: ids.length > 0 ? ids.join(",") : 0}, table);
                             }
