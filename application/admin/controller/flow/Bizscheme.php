@@ -2,10 +2,10 @@
 
 namespace app\admin\controller\flow;
 
-use think\Db;
-use think\Config;
 use app\common\controller\Backend;
+use think\Config;
 use think\console\Input;
+use think\Db;
 
 /**
  *
@@ -73,7 +73,7 @@ class Bizscheme extends Backend
             $params = $this->request->post("row/a");
             $schemeId = $this->request->request('scheme_id');
             $ins = $this->scheme->get($schemeId);
-            $bizScheme = $ins['bizscheme'];
+            $bizScheme = strtolower($ins['bizscheme']);
 
             if ($params) {
                 if ($this->dataLimit && $this->dataLimitFieldAutoFill) {

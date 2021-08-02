@@ -87,12 +87,8 @@ class FlowBackend extends Backend
                 $this->flow->start($params);
                 $this->success();
             } catch (\think\exception\PDOException $e) {
-                echo $e->getMessage();
-                exit();
                 $this->error($e->getMessage());
             } catch (\think\Exception $e) {
-                echo $e->getMessage();
-                exit();
                 $this->error($e->getMessage());
             }
         }

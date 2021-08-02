@@ -37,6 +37,12 @@ class Commonflow extends FlowBackend
 
 
     /**
+     * 是否开启Validate验证
+     */
+    protected $modelValidate = true;
+
+
+    /**
      * @var string
      */
     protected $flowCode;

@@ -1037,13 +1037,14 @@ EOD;
         unset($datum);
         $content = $this->getReplacedStub($name, $data);
 
-        if (!is_dir(dirname($pathname))) {
-            mkdir(dirname($pathname), 0755, true);
-        }
         if (!empty($data['flowCode']) && in_array($name, self::VIEW_TYPE, false)) {
             $this->saveViewData($data['flowCode'], $name, $content);
         }
-//        return true;
+        return true;
+
+        if (!is_dir(dirname($pathname))) {
+            mkdir(dirname($pathname), 0755, true);
+        }
         return file_put_contents($pathname, $content);
     }
 
