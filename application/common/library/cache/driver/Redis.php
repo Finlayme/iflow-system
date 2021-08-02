@@ -41,7 +41,6 @@ use think\cache\driver\Redis as RedisDriver;
  * @method  int hSet(string $key, string $hashKey, string $value)
  * @method  bool hSetNx(string $key, string $hashKey, string $value)
  * @method  array hVals(string $key)
- * @method  array hScan(string $key, int &$iterator, string $pattern = null, int $count = 0)
  * @method  int incr(string $key)
  * @method  int incrBy(string $key, int $value)
  * @method  float incrByFloat(string $key, float $increment)
@@ -77,14 +76,12 @@ use think\cache\driver\Redis as RedisDriver;
  * @method  string|array|bool sRandMember(string $key, int $count = null)
  * @method  array sUnion(string $key1, string $key2, string $keyN = null)
  * @method  int sUnionStore(string $dstKey, string $key1, string $key2, string $keyN = null)
- * @method  array|bool scan(int &$iterator, string $pattern = null, int $count = 0)
  * @method  mixed script(string|array $nodeParams, string $command, string $script)
  * @method  int setBit(string $key, int $offset, bool $value)
  * @method  string setRange(string $key, int $offset, $value)
  * @method  int setex(string $key, int $ttl, $value)
  * @method  bool setnx(string $key, $value)
  * @method  array sort(string $key, array $option = null)
- * @method  array sScan(string $key, int &$iterator, string $pattern = null, int $count = 0)
  * @method  int strlen(string $key)
  * @method  int ttl(string $key)
  * @method  int type(string $key)
@@ -106,9 +103,7 @@ use think\cache\driver\Redis as RedisDriver;
  * @method  array zRevRangeByScore(string $key, string $start, string $end, array $options = [])
  * @method  int zRevRank(string $key, string $member)
  * @method  float zScore(string $key, mixed $member)
- * @method  array zScan(string $key, int &$iterator, string $pattern = null, int $count = 0)
  * @method  bool expire(string $key, int $ttl)
- * @method  array keys(string $pattern)
  * @method  int lLen(string $key)
  * @method  string|bool lIndex(string $key, int $index)
  * @method  array lRange(string $key, int $start, int $end)
@@ -152,6 +147,12 @@ class Redis extends RedisDriver
 {
 
     /**
+     * @var \Redis;
+     */
+    protected $handler = null;
+
+    /**
+     * @TODO考虑到多key的情况，暂不统一处理key
      * @param $name
      * @param $arguments
      * @return mixed
