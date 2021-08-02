@@ -1043,7 +1043,7 @@ EOD;
         if (!empty($data['flowCode']) && in_array($name, self::VIEW_TYPE, false)) {
             $this->saveViewData($data['flowCode'], $name, $content);
         }
-        return true;
+//        return true;
         return file_put_contents($pathname, $content);
     }
 
